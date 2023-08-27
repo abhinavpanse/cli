@@ -89,6 +89,25 @@ describe('watchPaths', async () => {
   })
 })
 
+describe('buildDirectory', async () => {
+  test('returns the root directory by default', async () => {
+    const extensionInstance = await testThemeExtensions()
+
+    const got = extensionInstance.buildDirectory
+
+    expect(got).toBe(extensionInstance.directory)
+  })
+
+  test('returns the build directory if configured', async () => {
+    const buildDirectory = 'build'
+    const extensionInstance = await testThemeExtensions({buildDirectory})
+
+    const got = extensionInstance.buildDirectory
+
+    expect(got).toBe(joinPath(extensionInstance.directory, buildDirectory))
+  })
+})
+
 describe('isDraftable', () => {
   test('returns true for ui extensions when using unified deploys', async () => {
     const extensionInstance = await testUIExtension()
