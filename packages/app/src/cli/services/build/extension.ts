@@ -47,7 +47,7 @@ export interface ExtensionBuildOptions {
 export async function buildThemeExtension(extension: ExtensionInstance, options: ExtensionBuildOptions): Promise<void> {
   options.stdout.write(`Running theme check on your Theme app extension...`)
   await execThemeCheckCLI({
-    directories: [extension.directory],
+    directories: [extension.buildDirectory],
     args: ['-C', ':theme_app_extension'],
     stdout: options.stdout,
     stderr: options.stderr,
