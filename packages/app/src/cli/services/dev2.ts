@@ -18,7 +18,14 @@ import {outputUpdateURLsResult, renderDev} from './dev/ui.js'
 import {DevProcessFunction} from './dev/processes/types.js'
 import {canEnablePreviewMode} from './extensions/common.js'
 import {loadApp} from '../models/app/loader.js'
-import {Web, isCurrentAppSchema, getAppScopesArray, AppInterface} from '../models/app/app.js'
+import {
+  Web,
+  isCurrentAppSchema,
+  getAppScopesArray,
+  AppInterface,
+  CurrentAppConfiguration,
+  AppSchema,
+} from '../models/app/app.js'
 import {getAppIdentifiers} from '../models/app/identifiers.js'
 import {OrganizationApp} from '../models/organization.js'
 import {AbortController} from '@shopify/cli-kit/node/abort'
@@ -30,6 +37,9 @@ import {basename} from '@shopify/cli-kit/node/path'
 import {renderWarning} from '@shopify/cli-kit/node/ui'
 import {reportAnalyticsEvent} from '@shopify/cli-kit/node/analytics'
 import {OutputProcess, formatPackageManagerCommand} from '@shopify/cli-kit/node/output'
+import {mergeAppConfiguration} from './app/config/link.js'
+import {rewriteConfiguration} from './app/write-app-configuration-file.js'
+import {deepDifference} from '@shopify/cli-kit/common/object'
 
 export async function dev(commandOptions: DevOptions) {
   renderWarning({body: 'Running in new dev mode! Pass SHOPIFY_CLI_NEW_DEV=0 to run in old mode.'})
@@ -60,6 +70,26 @@ async function prepareForDev(commandOptions: DevOptions): Promise<DevConfig> {
   const apiKey = remoteApp.apiKey
   const specifications = await fetchSpecifications({token, apiKey, config: commandOptions.commandConfig})
   let localApp = await loadApp({directory: commandOptions.directory, specifications, configName})
+
+  const checkForUnpushedChanges = async (
+    localApp: CurrentAppConfiguration,
+    remoteApp: Omit<OrganizationApp, 'apiSecretKeys'>,
+  ) => {
+    const remoteConfig = mergeAppConfiguration(localApp, remoteApp as OrganizationApp)
+    const remote = rewriteConfiguration(AppSchema, remoteConfig) as {}
+    const local = rewriteConfiguration(AppSchema, localApp) as {}
+
+    const [upstreamConfig, localConfig] = deepDifference(remote, local)
+
+    //@ts-ignore
+    delete localConfig.build
+
+    console.log({upstreamConfig, localConfig})
+  }
+
+  if (isCurrentAppSchema(localApp.configuration)) {
+    await checkForUnpushedChanges(localApp.configuration, remoteApp)
+  }
 
   if (!commandOptions.skipDependenciesInstallation && !localApp.usesWorkspaces) {
     localApp = await installAppDependencies(localApp)
