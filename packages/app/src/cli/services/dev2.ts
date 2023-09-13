@@ -17,6 +17,8 @@ import {frontAndBackendConfig} from './dev/processes/utils.js'
 import {outputUpdateURLsResult, renderDev} from './dev/ui.js'
 import {DevProcessFunction} from './dev/processes/types.js'
 import {canEnablePreviewMode} from './extensions/common.js'
+import {mergeAppConfiguration} from './app/config/link.js'
+import {rewriteConfiguration} from './app/write-app-configuration-file.js'
 import {loadApp} from '../models/app/loader.js'
 import {
   Web,
@@ -34,11 +36,9 @@ import {getAvailableTCPPort} from '@shopify/cli-kit/node/tcp'
 import {TunnelClient} from '@shopify/cli-kit/node/plugins/tunnel'
 import {getBackendPort} from '@shopify/cli-kit/node/environment'
 import {basename} from '@shopify/cli-kit/node/path'
-import {renderWarning} from '@shopify/cli-kit/node/ui'
+import {renderConfirmationPrompt, renderWarning} from '@shopify/cli-kit/node/ui'
 import {reportAnalyticsEvent} from '@shopify/cli-kit/node/analytics'
 import {OutputProcess, formatPackageManagerCommand} from '@shopify/cli-kit/node/output'
-import {mergeAppConfiguration} from './app/config/link.js'
-import {rewriteConfiguration} from './app/write-app-configuration-file.js'
 import {deepDifference} from '@shopify/cli-kit/common/object'
 
 export async function dev(commandOptions: DevOptions) {
@@ -71,6 +71,28 @@ async function prepareForDev(commandOptions: DevOptions): Promise<DevConfig> {
   const specifications = await fetchSpecifications({token, apiKey, config: commandOptions.commandConfig})
   let localApp = await loadApp({directory: commandOptions.directory, specifications, configName})
 
+  function flattenObject(obj: {}) {
+    const result: {[key: string]: {} | undefined} = {}
+
+    function recurse(current?: {[key: string]: {[key: string]: {}}}, path = '') {
+      for (const key in current) {
+        const value = current[key]
+        const newPath = path ? `${path}.${key}` : key
+
+        // console.log({current, value}, typeof value === 'object', Boolean(value))
+        if (typeof value === 'object' && Boolean(value)) {
+          recurse(value, newPath)
+        } else {
+          result[newPath] = value
+        }
+      }
+    }
+
+    recurse(obj)
+
+    return result
+  }
+
   const checkForUnpushedChanges = async (
     localApp: CurrentAppConfiguration,
     remoteApp: Omit<OrganizationApp, 'apiSecretKeys'>,
@@ -81,10 +103,46 @@ async function prepareForDev(commandOptions: DevOptions): Promise<DevConfig> {
 
     const [upstreamConfig, localConfig] = deepDifference(remote, local)
 
-    //@ts-ignore
+    // @ts-ignore
     delete localConfig.build
 
-    console.log({upstreamConfig, localConfig})
+    const flatUpstream = Object.entries(flattenObject(upstreamConfig))
+    const flatLocal = Object.entries(flattenObject(localConfig))
+
+    if (flatUpstream.length) {
+      renderWarning({
+        headline: 'You have unpushed changes to your configuration file',
+        body: 'This could cause errors when installing and testing your app.',
+      })
+
+      await renderConfirmationPrompt({
+        message: 'Push your local changes up to Shopify? These updates will go live immediately',
+        gitDiff: {
+          baselineContent: flatUpstream
+            .map((tuple) => `${tuple[0].toString()}: ${tuple[1]!.toString()}`)
+            .toString()
+            .replaceAll(',', '\n'),
+          updatedContent: flatLocal
+            .map((tuple) => `${tuple[0].toString()}: ${tuple[1]!.toString()}`)
+            .toString()
+            .replaceAll(',', '\n'),
+        },
+        // infoTable: flatLocal.map((tuple, index) => {
+        //   return {
+        //     header: tuple[0]?.toString().replace('.', ' ').replace('_', ' ') ?? '',
+        //     items: [`${flatUpstream[index]![1]} -> ${tuple[1]?.toString()}` ?? ''],
+        //   }
+        // }),
+        confirmationMessage: 'Yes, push my changes now',
+        cancellationMessage: 'No, I still need to update my configuration',
+      })
+    }
+
+    // @ts-ignore
+    console.log(flatUpstream, flatLocal)
+
+    // console.log(deepDifference(flatUpstream, flatLocal))
+    // console.log(flattenObject(localConfig))
   }
 
   if (isCurrentAppSchema(localApp.configuration)) {
