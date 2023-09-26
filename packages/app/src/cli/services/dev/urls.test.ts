@@ -8,7 +8,6 @@ import {
   validatePartnersURLs,
   FrontendURLOptions,
 } from './urls.js'
-import {urlNamespaces} from '../../constants.js'
 import {DEFAULT_CONFIG, testApp, testAppWithConfig} from '../../models/app/app.test-data.js'
 import {UpdateURLsQuery} from '../../api/graphql/update_urls.js'
 import {GetURLsQuery} from '../../api/graphql/get_urls.js'
@@ -546,7 +545,6 @@ describe('generatePartnersURLs', () => {
         `${applicationUrl}/auth/callback`,
         `${applicationUrl}/auth/shopify/callback`,
         `${applicationUrl}/api/auth/callback`,
-        `${applicationUrl}/${urlNamespaces.devTools}/graphiql/auth/callback`,
       ],
     })
   })
@@ -586,7 +584,6 @@ describe('generatePartnersURLs', () => {
         `${applicationUrl}/auth/callback`,
         `${applicationUrl}/auth/shopify/callback`,
         `${applicationUrl}/api/auth/callback`,
-        `${applicationUrl}/${urlNamespaces.devTools}/graphiql/auth/callback`,
       ],
       appProxy: {
         proxyUrl: applicationUrl,
