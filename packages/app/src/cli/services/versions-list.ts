@@ -87,12 +87,12 @@ interface VersionListOptions {
 }
 
 export default async function versionList(options: VersionListOptions) {
-  const {token, partnersApp} = await ensureVersionsListContext(options)
+  const {partnersSession, partnersApp} = await ensureVersionsListContext(options)
   const {id: appId, organizationId, title, apiKey} = partnersApp
 
-  const {appVersions, totalResults} = await fetchAppVersions(token, apiKey)
+  const {appVersions, totalResults} = await fetchAppVersions(partnersSession.token, apiKey)
 
-  const {businessName: org} = await fetchOrgFromId(organizationId, token)
+  const {businessName: org} = await fetchOrgFromId(organizationId, partnersSession)
   renderCurrentlyUsedConfigInfo({
     org,
     appName: title,
