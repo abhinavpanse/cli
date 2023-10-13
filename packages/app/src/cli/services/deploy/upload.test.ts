@@ -799,7 +799,7 @@ describe('uploadExtensionsBundle', () => {
           },
         ],
         uuid: 'random-uuid',
-        skipPublish: true,
+        skipPublish: false,
       })
     })
   })
