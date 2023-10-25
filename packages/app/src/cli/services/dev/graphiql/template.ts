@@ -57,7 +57,7 @@ export const template = `
       .top-bar {
         padding: 0 4px;
         border-bottom: 1px solid #d6d6d6;
-        font-family: sans-serif;
+        font-family: Inter, sans-serif;
         font-size: 0.85em;
         color: #666;
       }
@@ -87,9 +87,9 @@ export const template = `
         flex-wrap: wrap;
       }
       .top-bar .box {
-        padding: 8px;
         text-align: left;
         align-self: center;
+        padding: 16px;
       }
       .top-bar .box.align-right {
         text-align: right;
@@ -103,6 +103,38 @@ export const template = `
       #graphiql-explorer {
         flex-grow: 1;
         overflow: auto;
+      }
+      .box {
+        border-right: 1px solid var(--border-border-subdued, #EBEBEB);
+      }
+      .status-container {
+
+      }
+      .status-pill {
+        padding: 2px 6px 2px 2px;
+        border-radius: 8px;
+      }
+      .status-pill.connected {
+        background: rgba(0, 0, 0, 0.03);
+      }
+      #version-select {
+        border-radius: 0.5rem;
+        border: 0.66px solid var(--input-subdued-border, #B5B5B5);
+        background: var(--input-surface, #FDFDFD);
+        padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+      }
+      .link-pill::before {
+        content: '🔗';
+        margin-right: 0.5rem;
+      }
+      .link-pill {
+        border-radius: 8px;
+        background: var(--global-azure-04, #E0F0FF);
+        padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+        margin-left: 0.5rem;
+      }
+      .link-pill a {
+        color: var(--global-azure-10, #006AFF);
       }
     </style>
     <script
@@ -125,8 +157,8 @@ export const template = `
       <div class="top-bar">
         <div class="container">
           <div class="container bounded">
-            <div class="box">
-              Status: <span id="status">🟢 Running</span>
+            <div class="box status-container">
+              Status: <span class="status-pill connected" id="status">🟢 Running</span>
             </div>
             <div class="box">
               API version:
@@ -137,14 +169,14 @@ export const template = `
               </select>
             </div>
             <div class="box">
-              Store: <a href="https://{{ storeFqdn }}/admin" target="_blank">{{ storeFqdn }}</a>
+              Store: <span class="link-pill"><a href="https://{{ storeFqdn }}/admin" target="_blank">{{ storeFqdn }}</a></span>
             </div>
             <div class="box">
-              App: <a href="{{ appUrl }}" target="_blank">{{ appName }}</a>
+              App: <span class="link-pill"><a href="{{ appUrl }}" target="_blank">{{ appName }}</a></span>
             </div>
           </div>
           <div class="box align-right">
-            The GraphiQL Explorer uses the access scopes declared in your app's configuration file.
+            GraphiQL runs on the same access scopes you’ve defined in the toml file for your app.
           </div>
         </div>
       </div>
