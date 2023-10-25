@@ -681,7 +681,7 @@ ALIASES
   $ shopify plugins add
 
 EXAMPLES
-  $ shopify plugins:install myplugin 
+  $ shopify plugins:install myplugin
 
   $ shopify plugins:install https://github.com/someuser/someplugin
 
@@ -746,7 +746,7 @@ ALIASES
   $ shopify plugins add
 
 EXAMPLES
-  $ shopify plugins:install myplugin 
+  $ shopify plugins:install myplugin
 
   $ shopify plugins:install https://github.com/someuser/someplugin
 
@@ -899,7 +899,8 @@ USAGE
 
 FLAGS
   -C, --config=<value>            Use the config provided, overriding .theme-check.yml if present
-                                  Use :theme_app_extension to use default checks for theme app extensions
+                                  Supports all theme-check: config values, e.g., theme-check:theme_app_extension,
+                                  theme-check:recommended, theme-check:all.
   -a, --auto-correct              Automatically fix offenses
   -c, --category=<value>          Only run this category of checks
                                   Runs checks matching all categories when specified more than once

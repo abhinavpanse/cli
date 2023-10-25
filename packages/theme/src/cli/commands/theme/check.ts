@@ -49,7 +49,7 @@ Runs checks matching all categories when specified more than once`,
       char: 'C',
       required: false,
       description: `Use the config provided, overriding .theme-check.yml if present
-Use :theme_app_extension to use default checks for theme app extensions`,
+Use theme-check:theme-app-extension to use default checks for theme app extensions`,
       env: 'SHOPIFY_FLAG_CONFIG',
     }),
     // Typescript theme check no longer uses `--exclude-categories`
