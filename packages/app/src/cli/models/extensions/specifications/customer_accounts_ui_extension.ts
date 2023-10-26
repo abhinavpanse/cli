@@ -6,7 +6,6 @@ import {zod} from '@shopify/cli-kit/node/schema'
 const dependency = '@shopify/customer-account-ui-extensions'
 
 const CustomerAccountsSchema = BaseSchema.extend({
-  categories: zod.array(zod.string()).optional(),
   extension_points: zod.array(zod.string()).optional(),
   localization: zod.any().optional(),
   authenticated_redirect_start_url: zod
@@ -37,7 +36,6 @@ const spec = createExtensionSpecification({
     return {
       extension_points: config.extension_points,
       name: config.name,
-      categories: config.categories,
       localization: await loadLocalesConfig(directory, 'customer_accounts_ui'),
       authenticated_redirect_start_url: config.authenticated_redirect_start_url,
       authenticated_redirect_redirect_urls: config.authenticated_redirect_redirect_urls,

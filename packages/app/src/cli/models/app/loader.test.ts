@@ -1278,7 +1278,6 @@ automatically_update_urls_on_dev = true
       type = "customer_accounts_ui_extension"
       name = "my-customer-accounts-ui-extension"
 
-      categories = [ "returns" ]
       authenticated_redirect_start_url = "https://example.com/start"
       authenticated_redirect_redirect_urls = ["https://example.com/redirect"]
 
@@ -1306,7 +1305,6 @@ automatically_update_urls_on_dev = true
         name: 'my-customer-accounts-ui-extension',
         extension_points: ['CustomerAccount::FullPage::RenderWithin'],
         metafields: [],
-        categories: ['returns'],
         authenticated_redirect_start_url: 'https://example.com/start',
         authenticated_redirect_redirect_urls: ['https://example.com/redirect'],
       })

@@ -11,7 +11,6 @@ const FlowTemplateExtensionSchema = BaseSchemaWithHandle.extend({
   type: zod.literal('flow_template'),
   description: zod.string().max(1024),
   template: zod.object({
-    categories: zod.array(zod.string()),
     module: zod.string(),
     require_app: zod.boolean(),
     discoverable: zod.boolean(),
@@ -29,7 +28,6 @@ const spec = createExtensionSpecification({
       handle: config.handle,
       name: config.name,
       description: config.description,
-      categories: config.template.categories,
       require_app: config.template.require_app,
       discoverable: config.template.discoverable,
       enabled: config.template.enabled,

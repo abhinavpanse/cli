@@ -99,7 +99,6 @@ describe('getUIExtensionPayload', () => {
           },
           status: 'success',
         },
-        categories: null,
         extensionPoints: ['CUSTOM_EXTENSION_POINT'],
         externalType: 'checkout_ui_extension_external',
         localization: null,
