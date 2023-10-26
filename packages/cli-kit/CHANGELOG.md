@@ -1,5 +1,11 @@
 # @shopify/cli-kit
 
+## 3.50.1
+
+### Patch Changes
+
+- 8c979a621: Fix TAE hot code reloading in spin
+
 ## 3.50.0
 
 ### Minor Changes

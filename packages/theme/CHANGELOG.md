@@ -1,5 +1,13 @@
 # @shopify/theme
 
+## 3.50.1
+
+### Patch Changes
+
+- 412b8ca74: Clarify `SHOPIFY_CLI_BUNDLED_THEME_CLI` environment variable should not be used, yet resolve its compatibility issue
+- Updated dependencies [8c979a621]
+  - @shopify/cli-kit@3.50.1
+
 ## 3.50.0
 
 ### Minor Changes
